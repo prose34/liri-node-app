@@ -6,6 +6,7 @@ var importKeys = require("./keys.js")
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var request = require('request');
+var fs = require("fs");
 
 var client = new Twitter(importKeys.twitter);
 var spotify = new Spotify(importKeys.spotify);
@@ -47,7 +48,7 @@ switch(command) {
         runSpotify(userInput);
       } else {
         runSpotify("The Sign Ace of Base");
-      }
+      };
       break;
 
   case "movie-this":
@@ -55,17 +56,17 @@ switch(command) {
          runOMDB(userInput);
       } else {
          runOMDB("Mr. Nobody");
-      }
+      };
       break; 
 
   case "do-what-it-says":
-      doThing();
+      runDoWhatItSays();
       break; 
 
   default:
       console.log("Please enter a command! Choose from the following: my-tweets, spotify-this-song, or movie-this");
       break; 
-}
+};
 
 // console.log(userInput);
 
@@ -73,12 +74,22 @@ switch(command) {
 
 function runTwitter () {
 
-  var params = {screen_name: 'CodingHW'};
-  client.get('statuses/user_timeline', params, function(error, tweets, response) {
-    if (!error) {
-      console.log(JSON.stringify(tweets, null, 2));
+  var screenName = {screen_name: 'CodingHW'};
 
-    }
+  client.get('statuses/user_timeline', screenName, function(error, tweets, response) {
+    if (!error) {
+      // console.log(JSON.stringify(tweets, null, 2));
+      console.log("====================================");
+      for (var i = 0; i < tweets.length; i++) {
+        var dateTweeted = tweets[i].created_at;
+        var tweetText = tweets[i].text;
+        console.log("You Tweeted: " + tweetText);
+        console.log("On This Date/Time: " + dateTweeted.substring(0, 19));
+        console.log("====================================");
+      };
+    } else {
+      console.log('Error!');
+    };
   });
 
 };
@@ -93,7 +104,7 @@ function runSpotify (userInput) {
   spotify.search({ type: 'track', query: userInput, limit: 5}, function(err, data) {
     if (err) {
       return console.log('Error occurred: ' + err);
-    }
+    };
 
     console.log("========================================");
 
@@ -114,7 +125,7 @@ function runSpotify (userInput) {
 
       // break between results
       console.log("========================================");
-    }
+    };
 
     var spotifyOutput = JSON.stringify(data, null, 2);
     // console.log(spotifyOutput); 
@@ -124,6 +135,7 @@ function runSpotify (userInput) {
 };
 
 
+// OMDB Function
 
 function runOMDB (userInput) {
 
@@ -148,7 +160,7 @@ function runOMDB (userInput) {
       // Title of the movie
       console.log("Movie Title: " + movieBody.Title);
       // Release Year
-      console.log("Release Date: " + movieBody.Released)
+      console.log("Release Year: " + movieBody.Year)
       //IMDB Rating of the movie.
       console.log("IMDB Rating: " + movieBody.imdbRating);
       //Rotten Tomatoes Rating of the movie.
@@ -164,37 +176,39 @@ function runOMDB (userInput) {
       console.log("Actors: " + movieBody.Actors);
 
 
-    }
+    };
   });
+};
 
 
+// text file function
 
-}
+function runDoWhatItSays () {
 
-// ===============================================
+  fs.readFile("random.txt", "utf8", function(error, data) {
 
-// node liri.js movie-this '<movie name here>'
+    var fileData = data.split(",");
+    console.log(fileData);
+    // console.log(data);
 
-// This will output the following information to your terminal/bash window:
+    runSpotify(fileData[1]);
 
-//    * Title of the movie.
-//    * Year the movie came out.
-//    * IMDB Rating of the movie.
-//    * Rotten Tomatoes Rating of the movie.
-//    * Country where the movie was produced.
-//    * Language of the movie.
-//    * Plot of the movie.
-//    * Actors in the movie.
+  });
+};  
 
 
-// If the user doesn't type a movie in, the program will output data for the movie 'Mr. Nobody.'
+// if error...
+// no error, log data. 
+// split data to make it more readable and then log that content:
+// var dataArr = data.split(",");
 
-// ===============================================
+// To append to a file:
+// As always, we grab the fs package to handle read/write
+// var fs = require("fs");
 
-// node liri.js do-what-it-says
+// We then store the textfile filename given to us from the command line
+// var textFile = process.argv[2];
 
-// Using the fs Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
-
-
-// It should run spotify-this-song for "I Want it That Way," as follows the text in random.txt.
-// Feel free to change the text in that document to test out the feature for other commands.
+// We then append the contents "Hello Kitty" into the file. If the file didn't exist then it gets created on the fly.
+// fs.appendFile(textFile, 'Hello Kitty', function(err) {
+// }
