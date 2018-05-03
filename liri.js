@@ -1,29 +1,51 @@
-require(.env).config();
+require("dotenv").config();
 
-var spotify = new Spotify(keys.spotify);
-var client = new Twitter(keys.twitter);
-
-// Twitter portion
+var importKeys = require("./keys.js")
 
 var Twitter = require('twitter');
+var Spotify = require('node-spotify-api');
+var request = require('request');
 
-var params = {screen_name: 'CodingHW'};
-client.get('statuses/user_timeline', params, function(error, tweets, response) {
-  if (!error) {
-    console.log(tweets);
+var client = new Twitter(importKeys.twitter);
+var spotify = new Spotify(importKeys.spotify);
+
+
+// var params = {screen_name: 'CodingHW'};
+// client.get('statuses/user_timeline', params, function(error, tweets, response) {
+//   if (!error) {
+//     console.log(JSON.stringify(tweets, null, 2));
+
+//   }
+// });
+
+
+var spotifyInput = process.argv;
+var trackName = '';
+
+for (var i = 2; i < spotifyInput.length; i++) {
+  trackName += ' ' + spotifyInput[i];
+}
+
+console.log(process.argv);
+console.log(trackName);
+
+spotify.search({ type: 'track', query: trackName, limit: 1}, function(err, data) {
+  if (err) {
+    return console.log('Error occurred: ' + err);
   }
+  var spotifyOutput = JSON.stringify(data, null, 2);
+  console.log(spotifyOutput); 
+
+  // console.log()
+  // console.log("Song name: " + data.items[5].name);
+
+  // console.log("Artist(s): " + data.tracks.items[5].album.artists[0].name);
+  // console.log("Preview link: " + data.tracks.items[5].preview_url);
+  // console.log("Album: " + data.tracks.items[5].album.name);
 });
 
-// * `my-tweets`
-// * `spotify-this-song`
-// * `movie-this`
-// * `do-what-it-says`
-// ===============================================
-// node liri.js my-tweets
 
-// This will show your last 20 tweets and when they were created at in your terminal/bash window.
 
-// ===============================================
 
 // node liri.js spotify-this-song '<song name here>'
 
