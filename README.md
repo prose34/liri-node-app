@@ -1,5 +1,7 @@
 # liri-node-app
 
+Create your own env file with appropriate keys in order to run this application. 
+
 liri.js can take in one of the following commands:
 
 * `my-tweets`
@@ -17,7 +19,7 @@ liri.js can take in one of the following commands:
 This will show your last 20 tweets and when they were created at in your terminal/bash window.
 
 
-2. node liri.js spotify-this-song '<song name here>'
+2. node liri.js spotify-this-song 'song name here'
 
 This will show the following information about the song in your terminal/bash window:
 
@@ -27,7 +29,7 @@ A preview link of the song from Spotify
 The album that the song is from
 
 
-3. node liri.js movie-this '<movie name here>'
+3. node liri.js movie-this 'movie name here'
 
 This will output the following information to your terminal/bash window:
 
